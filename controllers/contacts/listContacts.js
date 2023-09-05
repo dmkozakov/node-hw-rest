@@ -1,4 +1,3 @@
-const { HttpError } = require("../../helpers");
 const { Contact } = require("../../models");
 
 const listContacts = async (req, res) => {
@@ -12,7 +11,7 @@ const listContacts = async (req, res) => {
     limit,
   });
 
-  if (favorite !== undefined) {
+  if (favorite) {
     const result = await query.all("favorite", favorite).exec();
 
     return res.json(result);
