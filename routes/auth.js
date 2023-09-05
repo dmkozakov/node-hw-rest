@@ -1,6 +1,6 @@
 const express = require("express");
 const ctrl = require("../controllers/auth");
-const { validateBody, auth } = require("../middlewares");
+const { validateBody, auth, isValidId } = require("../middlewares");
 const schemas = require("../schemas/users");
 
 const router = express.Router();
@@ -15,8 +15,9 @@ router.get("/current", auth, ctrl.getCurrent);
 router.post("/logout", auth, ctrl.logout);
 
 router.patch(
-  "/:userId/subscription",
+  "/:id/subscription",
   auth,
+  isValidId,
   jsonParser,
   validateBody(schemas.updateSubscription),
   ctrl.updateSubscription

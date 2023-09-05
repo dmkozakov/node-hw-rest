@@ -2,9 +2,9 @@ const { HttpError } = require("../../helpers");
 const { User } = require("../../models");
 
 const updateSubscription = async (req, res) => {
-  const { userId } = req.params;
+  const { id } = req.params;
 
-  const result = await User.findByIdAndUpdate(userId, req.body, { new: true });
+  const result = await User.findByIdAndUpdate(id, req.body, { new: true });
 
   if (!result) {
     throw HttpError(404);
