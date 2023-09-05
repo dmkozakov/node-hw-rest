@@ -1,12 +1,12 @@
 const express = require("express");
 const ctrl = require("../../controllers/contacts");
-const { validateBody, isValidId, auth } = require("../../middlewares");
+const { validateBody, isValidId, auth, validateQuery } = require("../../middlewares");
 const schemas = require("../../schemas/contacts");
 
 const router = express.Router();
 const jsonParser = express.json();
 
-router.get("/", auth, ctrl.listContacts);
+router.get("/", auth, validateQuery(schemas.listContactsQuery), ctrl.listContacts);
 
 router.get("/:contactId", auth, isValidId, ctrl.getContactById);
 
