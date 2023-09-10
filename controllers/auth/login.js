@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { User } = require("../../models");
 const { HttpError } = require("../../helpers");
-const AuthService = require("../services/AuthService");
+const { AuthService } = require("../../services");
 
 const login = async (req, res) => {
   const { email, password } = req.body;

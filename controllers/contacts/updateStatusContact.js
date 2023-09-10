@@ -1,5 +1,5 @@
 const { HttpError } = require("../../helpers");
-const { ContactsService } = require("../services");
+const { ContactsService } = require("../../services");
 
 const updateStatusContact = async (req, res) => {
   const { favorite } = req.body;

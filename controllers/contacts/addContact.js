@@ -1,5 +1,5 @@
 const { HttpError } = require("../../helpers");
-const { ContactsService } = require("../services");
+const { ContactsService } = require("../../services");
 
 const addContact = async (req, res) => {
   const { name, email, phone } = req.body;

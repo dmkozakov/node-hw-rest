@@ -1,5 +1,5 @@
 const { HttpError } = require("../../helpers");
-const AuthService = require("../services/AuthService");
+const { AuthService } = require("../../services");
 
 const updateSubscription = async (req, res) => {
   const result = await AuthService.updateSubscription(req);
