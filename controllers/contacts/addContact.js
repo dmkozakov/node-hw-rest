@@ -1,11 +1,19 @@
-const { Contact } = require("../../models");
+const { HttpError } = require("../../helpers");
+const { ContactsService } = require("../services");
 
 const addContact = async (req, res) => {
-  const { _id: owner } = req.user;
+  const { name, email, phone } = req.body;
+  if (!name || !email || !phone) {
+    throw HttpError(400, "Missing required fields");
+  }
 
-  const result = await Contact.create({ ...req.body, owner });
+  const result = await ContactsService.add(req);
 
-  res.status(201).json(result);
+  if (!result) {
+    throw HttpError(400, "Unable to add contact");
+  }
+
+  res.status(201).json({ code: 201, data: result });
 };
 
 module.exports = addContact;

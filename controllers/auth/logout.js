@@ -1,10 +1,13 @@
-const { User } = require("../../models");
+const { HttpError } = require("../../helpers");
+const AuthService = require("../services/AuthService");
 
 const logout = async (req, res) => {
-  const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { token: null });
+  const result = await AuthService.logout(req);
 
-  res.status(204);
+  if (!result) {
+    throw HttpError(400);
+  }
+  res.status(204).send();
 };
 
 module.exports = logout;

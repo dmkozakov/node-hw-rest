@@ -1,9 +1,13 @@
-const bcrypt = require("bcrypt");
 const { User } = require("../../models");
 const { HttpError } = require("../../helpers");
+const AuthService = require("../services/AuthService");
 
 const register = async (req, res) => {
-  const { email, password, subscription } = req.body;
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw HttpError(400, "Missing required fields");
+  }
 
   const user = await User.findOne({ email }).exec();
 
@@ -11,13 +15,19 @@ const register = async (req, res) => {
     throw HttpError(409, "Email already in use");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ email, password: hashedPassword, subscription });
+  const newUser = await AuthService.register(req);
+
+  if (!newUser) {
+    throw HttpError(400, "Unable to register, try again later");
+  }
 
   res.status(201).json({
-    user: {
-      email: newUser.email,
-      subscription: newUser.subscription,
+    code: 201,
+    data: {
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription,
+      },
     },
   });
 };

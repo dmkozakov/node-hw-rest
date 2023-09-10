@@ -1,7 +1,7 @@
 const express = require("express");
-const ctrl = require("../controllers/auth");
-const { validateBody, auth, isValidId } = require("../middlewares");
-const schemas = require("../schemas/users");
+const ctrl = require("../../controllers/auth");
+const { validateBody, auth, isValidId } = require("../../middlewares");
+const schemas = require("../../schemas/users");
 
 const router = express.Router();
 const jsonParser = express.json();

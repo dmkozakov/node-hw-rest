@@ -1,25 +1,14 @@
-const { Contact } = require("../../models");
+const { HttpError } = require("../../helpers");
+const { ContactsService } = require("../services");
 
 const listContacts = async (req, res) => {
-  const { _id: owner } = req.user;
+  const result = await ContactsService.getAll(req);
 
-  const { page = 1, limit = 10, favorite } = req.query;
-  const skip = (page - 1) * limit;
-
-  const query = Contact.find({ owner }, "-createdAt -updatedAt", {
-    skip,
-    limit,
-  });
-
-  if (favorite) {
-    const result = await query.all("favorite", favorite).exec();
-
-    return res.json(result);
+  if (!result) {
+    throw HttpError(400, "Unable to fetch contacts");
   }
 
-  const result = await query.exec();
-
-  res.json(result);
+  res.status(200).json({ code: 200, data: result });
 };
 
 module.exports = listContacts;

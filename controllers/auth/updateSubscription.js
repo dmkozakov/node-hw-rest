@@ -1,16 +1,14 @@
 const { HttpError } = require("../../helpers");
-const { User } = require("../../models");
+const AuthService = require("../services/AuthService");
 
 const updateSubscription = async (req, res) => {
-  const { id } = req.params;
-
-  const result = await User.findByIdAndUpdate(id, req.body, { new: true });
+  const result = await AuthService.updateSubscription(req);
 
   if (!result) {
     throw HttpError(404);
   }
 
-  res.status(201).json(result);
+  res.status(201).json({ code: 201, data: result });
 };
 
 module.exports = updateSubscription;
