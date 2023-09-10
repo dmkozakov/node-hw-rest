@@ -1,14 +1,14 @@
-const { Contact } = require("../../models");
 const { HttpError } = require("../../helpers");
+const { ContactsService } = require("../services");
 
 const removeContact = async (req, res) => {
-  const { contactId } = req.params;
-  const result = await Contact.findByIdAndRemove(contactId);
+  const result = await ContactsService.remove(req);
+
   if (!result) {
     throw HttpError(400, "Not found");
   }
 
-  res.json(result);
+  res.status(204).json({ code: 204, data: result });
 };
 
 module.exports = removeContact;
