@@ -35,6 +35,7 @@ const login = async (req, res) => {
       },
     },
   });
+  console.log(res.statusCode);
 };
 
 module.exports = login;

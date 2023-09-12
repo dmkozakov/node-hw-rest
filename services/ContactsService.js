@@ -54,7 +54,6 @@ class ContactsService {
   async remove(req) {
     const { id } = req.params;
     const result = await Contact.findByIdAndRemove(id);
-    console.log(result);
 
     return result || null;
   }
