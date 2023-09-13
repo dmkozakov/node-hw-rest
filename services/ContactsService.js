@@ -1,4 +1,4 @@
-const { Contact } = require("../../models");
+const { Contact } = require("../models");
 
 class ContactsService {
   async getAll(req) {
@@ -54,7 +54,6 @@ class ContactsService {
   async remove(req) {
     const { id } = req.params;
     const result = await Contact.findByIdAndRemove(id);
-    console.log(result);
 
     return result || null;
   }

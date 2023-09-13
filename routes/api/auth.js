@@ -1,18 +1,20 @@
 const express = require("express");
-const ctrl = require("../../controllers/auth");
-const { validateBody, auth, isValidId } = require("../../middlewares");
+const authCtrl = require("../../controllers/auth");
+const { validateBody, auth, isValidId, upload } = require("../../middlewares");
 const schemas = require("../../schemas/users");
 
 const router = express.Router();
 const jsonParser = express.json();
 
-router.post("/register", jsonParser, validateBody(schemas.register), ctrl.register);
+router.post("/register", jsonParser, validateBody(schemas.register), authCtrl.register);
 
-router.post("/login", jsonParser, validateBody(schemas.login), ctrl.login);
+router.post("/login", jsonParser, validateBody(schemas.login), authCtrl.login);
 
-router.get("/current", auth, ctrl.getCurrent);
+router.get("/current", auth, authCtrl.getCurrent);
 
-router.post("/logout", auth, ctrl.logout);
+router.post("/logout", auth, authCtrl.logout);
+
+router.patch("/avatars", auth, upload.single("avatar"), authCtrl.updateAvatar);
 
 router.patch(
   "/:id/subscription",
@@ -20,7 +22,7 @@ router.patch(
   isValidId,
   jsonParser,
   validateBody(schemas.updateSubscription),
-  ctrl.updateSubscription
+  authCtrl.updateSubscription
 );
 
 module.exports = router;
