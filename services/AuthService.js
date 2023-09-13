@@ -4,8 +4,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const Jimp = require("jimp");
+const crypto = require("node:crypto");
 
 const { User } = require("../models");
+const { sendEmail, verifyEmail } = require("../helpers");
 const { JWT_SECRET } = process.env;
 const avatarsDir = path.join(process.cwd(), "public", "avatars");
 const uploadDir = path.join(process.cwd(), "tmp");
@@ -15,8 +17,20 @@ class AuthService {
     const { email, password, subscription } = req.body;
     const avatarURL = gravatar.url(email);
 
+    const verificationToken = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword, subscription, avatarURL });
+
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      subscription,
+      avatarURL,
+      verificationToken,
+    });
+
+    const verificationEmail = verifyEmail(email, verificationToken);
+
+    await sendEmail(verificationEmail);
 
     return newUser || null;
   }
@@ -58,7 +72,17 @@ class AuthService {
     await fs.unlink(tmpUpload);
 
     const avatarURL = path.join("avatars", filename);
-    const result = await User.findByIdAndUpdate(_id, { avatarURL }, { new: true });
+    const result = await User.findByIdAndUpdate(_id, { avatarURL }, { new: true }).exec();
+
+    return result || null;
+  }
+
+  async verify(id) {
+    const result = await User.findByIdAndUpdate(
+      id,
+      { verify: true, verificationToken: null },
+      { new: true }
+    ).exec();
 
     return result || null;
   }

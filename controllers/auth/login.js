@@ -18,6 +18,10 @@ const login = async (req, res) => {
     throw HttpError(401, "Email or password invalid");
   }
 
+  if (!user.verify) {
+    throw HttpError(401, "Please verify your email");
+  }
+
   const result = await AuthService.login(user._id);
   const token = result?.token;
 
@@ -35,7 +39,6 @@ const login = async (req, res) => {
       },
     },
   });
-  console.log(res.statusCode);
 };
 
 module.exports = login;
