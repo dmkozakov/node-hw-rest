@@ -8,6 +8,10 @@ const jsonParser = express.json();
 
 router.post("/register", jsonParser, validateBody(schemas.register), authCtrl.register);
 
+router.get("/verify/:token", authCtrl.verify);
+
+router.post("/verify", jsonParser, authCtrl.resendVerify);
+
 router.post("/login", jsonParser, validateBody(schemas.login), authCtrl.login);
 
 router.get("/current", auth, authCtrl.getCurrent);
