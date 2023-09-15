@@ -76,16 +76,6 @@ class AuthService {
 
     return result || null;
   }
-
-  async verify(id) {
-    const result = await User.findByIdAndUpdate(
-      id,
-      { verify: true, verificationToken: null },
-      { new: true }
-    ).exec();
-
-    return result || null;
-  }
 }
 
 module.exports = new AuthService();
