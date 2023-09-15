@@ -1,6 +1,6 @@
 const { HttpError } = require("../../helpers");
 const { User } = require("../../models");
-const { AuthService } = require("../../services");
+const { EmailService } = require("../../services");
 
 const verify = async (req, res) => {
   const { token } = req.params;
@@ -11,7 +11,7 @@ const verify = async (req, res) => {
     throw HttpError(404, "User not found");
   }
 
-  const result = await AuthService.verify(user._id);
+  const result = await EmailService.verify(user._id);
 
   if (!result) {
     throw HttpError(400, "Unable to verify email");
