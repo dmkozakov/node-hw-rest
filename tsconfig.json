@@ -13,9 +13,13 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "emitDeclarationOnly": false
+    
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],
-  "lib": ["esnext"]
 }

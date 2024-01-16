@@ -1,9 +1,8 @@
-const Joi = require("joi");
+import { Schema } from 'joi';
+import Joi from 'joi';
 
-const addSchema = Joi.object({
+export const addSchema: Schema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
 });
-
-module.exports = addSchema
