@@ -1,5 +1,7 @@
 "use strict";
-const ctrlWrapper = ctrl => {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ctrlWrapper = void 0;
+const ctrlWrapper = (ctrl) => {
     const func = async (req, res, next) => {
         try {
             await ctrl(req, res, next);
@@ -10,5 +12,5 @@ const ctrlWrapper = ctrl => {
     };
     return func;
 };
-module.exports = ctrlWrapper;
+exports.ctrlWrapper = ctrlWrapper;
 //# sourceMappingURL=ctrlWrapper.js.map
