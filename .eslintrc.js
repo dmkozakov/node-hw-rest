@@ -4,9 +4,13 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['standard', 'prettier'],
+  parser: '@typescript-eslint/parser',
+  extends: ['plugin:@typescript-eslint/recommended'],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2018,
+    sourceType: 'module',
   },
-  rules: {},
-}
+  rules: {
+    '@typescript-eslint/no-var-requires': 'off',
+  },
+};
