@@ -1,13 +1,6 @@
 import { Schema, model } from "mongoose";
 import { handleMongooseError } from "../helpers";
 
-// interface IContact {
-//   name: string;
-//   email: string;
-//   phone: string;
-//   favorite: boolean
-// }
-
 const contactSchema = new Schema(
   {
     name: {
