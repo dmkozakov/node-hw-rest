@@ -4,7 +4,7 @@ import cors from 'cors';
 import 'dotenv/config';
 
 import contactsRouter from './routes/api/contacts';
-import authRouter from './routes/api/auth.js';
+import authRouter from './routes/api/auth';
 
 import type { Express, Request, Response, NextFunction } from 'express';
 import { IError } from './interfaces/IError';
