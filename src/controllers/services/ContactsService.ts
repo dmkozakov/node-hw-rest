@@ -1,19 +1,22 @@
-const { Contact } = require("../../models");
+import { CustomRequest } from '../../interfaces/IUser';
+import { Contact } from '../../models';
+
+import type { Request } from 'express';
 
 class ContactsService {
-  async getAll(req) {
-    const { _id: owner } = req.user;
+  async getAll(req: Request) {
+    const { _id: owner } = (req as CustomRequest).user;
 
     const { page = 1, limit = 10, favorite } = req.query;
-    const skip = (page - 1) * limit;
+    const skip = (Number(page) - 1) * Number(limit);
 
-    const query = Contact.find({ owner }, "-createdAt -updatedAt", {
+    const query = Contact.find({ owner }, '-createdAt -updatedAt', {
       skip,
-      limit,
+      limit: Number(limit),
     });
 
     if (favorite) {
-      const result = await query.all("favorite", favorite).exec();
+      const result = await query.all('favorite', [favorite]).exec();
 
       return result || null;
     }
@@ -22,36 +25,36 @@ class ContactsService {
     return result || null;
   }
 
-  async add(req) {
-    const { _id: owner } = req.user;
+  async add(req: Request) {
+    const { _id: owner } = (req as CustomRequest).user;
 
     const result = await Contact.create({ ...req.body, owner });
 
     return result || null;
   }
 
-  async getByTd(req) {
+  async getById(req: Request) {
     const { id } = req.params;
     const result = await Contact.findById(id);
 
     return result || null;
   }
 
-  async update(req) {
+  async update(req: Request) {
     const { id } = req.params;
     const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
 
     return result || null;
   }
 
-  async updateStatus(req) {
+  async updateStatus(req: Request) {
     const { id } = req.params;
     const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
 
     return result || null;
   }
 
-  async remove(req) {
+  async remove(req: Request) {
     const { id } = req.params;
     const result = await Contact.findByIdAndRemove(id);
     console.log(result);
@@ -60,4 +63,4 @@ class ContactsService {
   }
 }
 
-module.exports = new ContactsService();
+export default new ContactsService();
