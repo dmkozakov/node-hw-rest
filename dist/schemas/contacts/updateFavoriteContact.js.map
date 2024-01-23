@@ -1,0 +1,1 @@
+{"version":3,"file":"updateFavoriteContact.js","sourceRoot":"","sources":["../../../src/schemas/contacts/updateFavoriteContact.ts"],"names":[],"mappings":";;;;;AAAA,8CAAkC;AAElC,MAAM,qBAAqB,GAAW,aAAG,CAAC,MAAM,CAAC;IAC/C,QAAQ,EAAE,aAAG,CAAC,OAAO,EAAE,CAAC,QAAQ,EAAE,CAAC,QAAQ,CAAC,EAAE,cAAc,EAAE,wBAAwB,EAAE,CAAC;CAC1F,CAAC,CAAC;AAEH,kBAAe,qBAAqB,CAAC"}

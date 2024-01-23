@@ -3,11 +3,14 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
-    jest: true,
   },
-  extends: ["standard", "prettier"],
+  parser: "@typescript-eslint/parser",
+  extends: ["plugin:@typescript-eslint/recommended", "prettier"],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2018,
+    sourceType: "module",
   },
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-var-requires": "off",
+  },
 };
