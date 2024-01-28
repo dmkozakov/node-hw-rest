@@ -6,6 +6,7 @@ import type { Request, Response } from 'express';
 
 const verify = async (req: Request, res: Response) => {
   const { token } = req.params;
+  console.log(token)
 
   const user = await User.findOne({ verificationToken: token }).exec();
 

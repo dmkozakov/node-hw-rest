@@ -16,6 +16,8 @@ const register = async (req: Request, res: Response) => {
   }
 
   const newUser = await AuthService.register(req);
+  res.cookie('refreshToken', newUser?.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
   if (!newUser) {
     throw HttpError.set(400, 'Unable to register, try again later');
   }
@@ -27,6 +29,10 @@ const register = async (req: Request, res: Response) => {
         email: newUser.email,
         subscription: newUser.subscription,
         avatarURL: newUser.avatarURL,
+      },
+      tokens: {
+        accessToken: newUser.accessToken,
+        refreshToken: newUser.refreshToken,
       },
     },
   });

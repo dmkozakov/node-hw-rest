@@ -25,7 +25,7 @@ const login = async (req: Request, res: Response) => {
   }
 
   const result = await AuthService.login(user._id);
-  const token = result?.token;
+  const token = result?.accessToken;
 
   if (!token) {
     throw HttpError.set(401);
