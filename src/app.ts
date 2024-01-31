@@ -1,7 +1,8 @@
+import 'dotenv/config';
 import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
-import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 
 import contactsRouter from './routes/api/contacts';
 import authRouter from './routes/api/auth';
@@ -14,6 +15,7 @@ const app: Express = express();
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
+app.use(cookieParser());
 app.use(cors());
 app.use(express.static('public'));
 

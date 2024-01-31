@@ -1,21 +1,21 @@
 import fs from 'fs/promises';
 import path from 'path';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import gravatar from 'gravatar';
 import Jimp from 'jimp';
 import crypto from 'node:crypto';
 
 import { User } from '../models';
-import { sendEmail, verifyEmail } from '../helpers';
+import { HttpError, sendEmail, verifyEmail } from '../helpers';
 
-const { JWT_SECRET } = process.env;
 const avatarsDir = path.join(process.cwd(), 'public', 'avatars');
 const uploadDir = path.join(process.cwd(), 'tmp');
 
 import type { Request } from 'express';
 import { Types } from 'mongoose';
-import { UserRequest } from '../interfaces/IUser';
+import { UserData, UserRequest } from '../interfaces/IUser';
+import TokenService from './TokenService';
+import { UserDto } from '../dtos';
 
 type FileRequest = Request & { file: { path: string; originalname: string } };
 
@@ -35,29 +35,87 @@ class AuthService {
       verificationToken,
     });
 
-    const verificationEmail = verifyEmail(email, verificationToken);
+    const userDto = new UserDto(newUser);
+    const tokens = TokenService.generateToken({ ...userDto });
 
+    if (!tokens) {
+      return null;
+    }
+
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+    newUser.accessToken = tokens.accessToken;
+    newUser.refreshToken = tokens.refreshToken;
+    await newUser.save();
+
+    const verificationEmail = verifyEmail(email, verificationToken);
     await sendEmail(verificationEmail);
 
     return newUser || null;
   }
 
   async login(id: Types.ObjectId) {
-    if (typeof JWT_SECRET !== 'string') {
+    const user = await User.findOne(id).exec();
+
+    if (!user) {
       return null;
     }
 
-    const payload = { id };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '2h' });
-    const result = await User.findByIdAndUpdate(id, { token }, { new: true }).exec();
+    const userDto = new UserDto(user);
+    const tokens = TokenService.generateToken({ ...userDto });
+
+    if (!tokens) {
+      return null;
+    }
+
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+    user.accessToken = tokens.accessToken;
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+
+    return user || null;
+  }
+
+  async logout(req: Request) {
+    const { refreshToken } = req.cookies;
+    await TokenService.removeToken(refreshToken);
+
+    const { _id } = (req as UserRequest).user;
+    const result = await User.findByIdAndUpdate(_id, { accessToken: null, refreshToken: null }, { new: true });
 
     return result || null;
   }
 
-  async logout(req: Request) {
-    const { _id } = (req as UserRequest).user;
-    const result = await User.findByIdAndUpdate(_id, { token: null }, { new: true });
-    return result || null;
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw HttpError.set(401);
+    }
+
+    const userData = TokenService.validateRefreshToken(refreshToken);
+    const tokenFromDB = await TokenService.findToken(refreshToken);
+
+    if (!userData || !tokenFromDB) {
+      throw HttpError.set(401);
+    }
+
+    const user = await User.findById((userData as UserData).id);
+
+    if (!user) {
+      return null;
+    }
+
+    const userDto = new UserDto(user);
+    const tokens = TokenService.generateToken({ ...userDto });
+
+    if (!tokens) {
+      return null;
+    }
+
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
+    user.accessToken = tokens.accessToken;
+    user.refreshToken = tokens.refreshToken;
+    await user.save();
+
+    return user || null;
   }
 
   async updateSubscription(req: Request) {

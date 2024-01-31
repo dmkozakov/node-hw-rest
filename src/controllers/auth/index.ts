@@ -6,6 +6,7 @@ import logout from './logout';
 import register from './register';
 import updateAvatar from './updateAvatar';
 import updateSubscription from './updateSubscription';
+import refresh from './refresh';
 
 export default {
   register: ctrlWrapper(register),
@@ -14,4 +15,5 @@ export default {
   logout: ctrlWrapper(logout),
   updateSubscription: ctrlWrapper(updateSubscription),
   updateAvatar: ctrlWrapper(updateAvatar),
+  refresh: ctrlWrapper(refresh),
 };

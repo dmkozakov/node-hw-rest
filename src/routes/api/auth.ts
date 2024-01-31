@@ -15,6 +15,8 @@ router.post('/verify', jsonParser, emailCtrl.resendVerify);
 
 router.post('/login', jsonParser, validateBody(schemas.login), authCtrl.login);
 
+router.get('/refresh', authCtrl.refresh);
+
 router.get('/current', auth, authCtrl.getCurrent);
 
 router.post('/logout', auth, authCtrl.logout);

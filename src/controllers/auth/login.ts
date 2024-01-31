@@ -25,7 +25,9 @@ const login = async (req: Request, res: Response) => {
   }
 
   const result = await AuthService.login(user._id);
+
   const token = result?.accessToken;
+  res.cookie('refreshToken', result?.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
 
   if (!token) {
     throw HttpError.set(401);
@@ -34,10 +36,13 @@ const login = async (req: Request, res: Response) => {
   res.status(200).json({
     code: 200,
     data: {
-      token,
       user: {
-        email: user.email,
-        subscription: user.subscription,
+        email: result.email,
+        subscription: result.subscription,
+      },
+      tokens: {
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
       },
     },
   });

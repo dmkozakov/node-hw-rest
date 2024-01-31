@@ -6,7 +6,8 @@ export interface IUser {
   email: string;
   password?: string;
   subscription: 'starter' | 'pro' | 'business';
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   avatarURL: string | null;
   verify: boolean;
   verificationToken: string;
@@ -15,3 +16,7 @@ export interface IUser {
 export type UserRequest = Request & {
   user: IUser;
 };
+
+export interface UserData {
+  id: Types.ObjectId;
+}

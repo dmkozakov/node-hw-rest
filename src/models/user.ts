@@ -17,7 +17,11 @@ const userSchema = new Schema(
       enum: ['starter', 'pro', 'business'],
       default: 'starter',
     },
-    token: {
+    accessToken: {
+      type: String,
+      default: null,
+    },
+    refreshToken: {
       type: String,
       default: null,
     },
@@ -31,7 +35,7 @@ const userSchema = new Schema(
     },
     verificationToken: {
       type: String,
-      required: [true, 'Verify token is required'],
+      default: null,
     },
   },
   { versionKey: false, timestamps: true },
@@ -40,5 +44,7 @@ const userSchema = new Schema(
 userSchema.post('save', { errorHandler: true }, handleMongooseError);
 
 const User = model('user', userSchema);
+
+export type IUserModel = typeof User;
 
 export default User;

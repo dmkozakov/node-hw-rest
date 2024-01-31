@@ -1,4 +1,5 @@
 import Contact from './contact';
 import User from './user';
+import Token from './token';
 
-export { Contact, User };
+export { Contact, User, Token };
