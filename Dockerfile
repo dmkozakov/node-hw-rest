@@ -9,6 +9,6 @@ RUN npm install
 # 5. Choose PORT
 EXPOSE 3000
 # 6. Start command
-CMD [ "node","server" ]
+CMD [ "node","./dist/server.js" ]
 
 
