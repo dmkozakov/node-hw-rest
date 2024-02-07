@@ -10,6 +10,7 @@ const logout_1 = __importDefault(require("./logout"));
 const register_1 = __importDefault(require("./register"));
 const updateAvatar_1 = __importDefault(require("./updateAvatar"));
 const updateSubscription_1 = __importDefault(require("./updateSubscription"));
+const refresh_1 = __importDefault(require("./refresh"));
 exports.default = {
     register: (0, ctrlWrapper_1.default)(register_1.default),
     login: (0, ctrlWrapper_1.default)(login_1.default),
@@ -17,5 +18,6 @@ exports.default = {
     logout: (0, ctrlWrapper_1.default)(logout_1.default),
     updateSubscription: (0, ctrlWrapper_1.default)(updateSubscription_1.default),
     updateAvatar: (0, ctrlWrapper_1.default)(updateAvatar_1.default),
+    refresh: (0, ctrlWrapper_1.default)(refresh_1.default),
 };
 //# sourceMappingURL=index.js.map

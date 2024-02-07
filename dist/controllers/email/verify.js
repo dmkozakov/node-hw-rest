@@ -5,6 +5,7 @@ const index_1 = require("../../models/index");
 const services_1 = require("../../services");
 const verify = async (req, res) => {
     const { token } = req.params;
+    console.log(token);
     const user = await index_1.User.findOne({ verificationToken: token }).exec();
     if (!user) {
         throw helpers_1.HttpError.set(404, 'User not found');

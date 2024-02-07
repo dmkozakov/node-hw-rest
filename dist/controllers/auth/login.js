@@ -21,17 +21,21 @@ const login = async (req, res) => {
         throw helpers_1.HttpError.set(401, 'Please verify your email');
     }
     const result = await services_1.AuthService.login(user._id);
-    const token = result === null || result === void 0 ? void 0 : result.token;
+    const token = result === null || result === void 0 ? void 0 : result.accessToken;
+    res.cookie('refreshToken', result === null || result === void 0 ? void 0 : result.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     if (!token) {
         throw helpers_1.HttpError.set(401);
     }
     res.status(200).json({
         code: 200,
         data: {
-            token,
             user: {
-                email: user.email,
-                subscription: user.subscription,
+                email: result.email,
+                subscription: result.subscription,
+            },
+            tokens: {
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
             },
         },
     });

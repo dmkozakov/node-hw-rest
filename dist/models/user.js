@@ -17,7 +17,11 @@ const userSchema = new mongoose_1.Schema({
         enum: ['starter', 'pro', 'business'],
         default: 'starter',
     },
-    token: {
+    accessToken: {
+        type: String,
+        default: null,
+    },
+    refreshToken: {
         type: String,
         default: null,
     },
@@ -31,7 +35,7 @@ const userSchema = new mongoose_1.Schema({
     },
     verificationToken: {
         type: String,
-        required: [true, 'Verify token is required'],
+        default: null,
     },
 }, { versionKey: false, timestamps: true });
 userSchema.post('save', { errorHandler: true }, index_1.handleMongooseError);

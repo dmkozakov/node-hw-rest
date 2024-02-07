@@ -6,15 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const gravatar_1 = __importDefault(require("gravatar"));
 const jimp_1 = __importDefault(require("jimp"));
 const node_crypto_1 = __importDefault(require("node:crypto"));
 const models_1 = require("../models");
 const helpers_1 = require("../helpers");
-const { JWT_SECRET } = process.env;
 const avatarsDir = path_1.default.join(process.cwd(), 'public', 'avatars');
 const uploadDir = path_1.default.join(process.cwd(), 'tmp');
+const TokenService_1 = __importDefault(require("./TokenService"));
+const dtos_1 = require("../dtos");
 class AuthService {
     async register(req) {
         const { email, password, subscription } = req.body;
@@ -28,23 +28,65 @@ class AuthService {
             avatarURL,
             verificationToken,
         });
+        const userDto = new dtos_1.UserDto(newUser);
+        const tokens = TokenService_1.default.generateToken({ ...userDto });
+        if (!tokens) {
+            return null;
+        }
+        await TokenService_1.default.saveToken(userDto.id, tokens.refreshToken);
+        newUser.accessToken = tokens.accessToken;
+        newUser.refreshToken = tokens.refreshToken;
+        await newUser.save();
         const verificationEmail = (0, helpers_1.verifyEmail)(email, verificationToken);
         await (0, helpers_1.sendEmail)(verificationEmail);
         return newUser || null;
     }
     async login(id) {
-        if (typeof JWT_SECRET !== 'string') {
+        const user = await models_1.User.findOne(id).exec();
+        if (!user) {
             return null;
         }
-        const payload = { id };
-        const token = jsonwebtoken_1.default.sign(payload, JWT_SECRET, { expiresIn: '2h' });
-        const result = await models_1.User.findByIdAndUpdate(id, { token }, { new: true }).exec();
-        return result || null;
+        const userDto = new dtos_1.UserDto(user);
+        const tokens = TokenService_1.default.generateToken({ ...userDto });
+        if (!tokens) {
+            return null;
+        }
+        await TokenService_1.default.saveToken(userDto.id, tokens.refreshToken);
+        user.accessToken = tokens.accessToken;
+        user.refreshToken = tokens.refreshToken;
+        await user.save();
+        return user || null;
     }
     async logout(req) {
+        const { refreshToken } = req.cookies;
+        await TokenService_1.default.removeToken(refreshToken);
         const { _id } = req.user;
-        const result = await models_1.User.findByIdAndUpdate(_id, { token: null }, { new: true });
+        const result = await models_1.User.findByIdAndUpdate(_id, { accessToken: null, refreshToken: null }, { new: true });
         return result || null;
+    }
+    async refresh(refreshToken) {
+        if (!refreshToken) {
+            throw helpers_1.HttpError.set(401);
+        }
+        const userData = TokenService_1.default.validateRefreshToken(refreshToken);
+        const tokenFromDB = await TokenService_1.default.findToken(refreshToken);
+        if (!userData || !tokenFromDB) {
+            throw helpers_1.HttpError.set(401);
+        }
+        const user = await models_1.User.findById(userData.id);
+        if (!user) {
+            return null;
+        }
+        const userDto = new dtos_1.UserDto(user);
+        const tokens = TokenService_1.default.generateToken({ ...userDto });
+        if (!tokens) {
+            return null;
+        }
+        await TokenService_1.default.saveToken(userDto.id, tokens.refreshToken);
+        user.accessToken = tokens.accessToken;
+        user.refreshToken = tokens.refreshToken;
+        await user.save();
+        return user || null;
     }
     async updateSubscription(req) {
         const { id } = req.params;

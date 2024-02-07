@@ -16,7 +16,12 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  }),
+);
 app.use(express.static('public'));
 
 app.use('/api/contacts', contactsRouter);

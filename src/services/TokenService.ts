@@ -13,7 +13,7 @@ interface Payload {
 class TokenService {
   generateToken(payload: Payload) {
     if (typeof JWT_ACCESS_SECRET === 'string' && typeof JWT_REFRESH_SECRET === 'string') {
-      const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '10s' });
+      const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '15m' });
       const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '30d' });
 
       return {

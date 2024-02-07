@@ -1,12 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const index_1 = require("../models/index");
 const index_2 = require("../helpers/index");
-const { JWT_SECRET } = process.env;
+const services_1 = require("../services");
 const auth = async (req, _, next) => {
     const { authorization = '' } = req.headers;
     const [bearer, token] = authorization.split(' ');
@@ -14,20 +10,21 @@ const auth = async (req, _, next) => {
         next(index_2.HttpError.set(401));
     }
     try {
-        if (typeof JWT_SECRET === 'string') {
-            const { id } = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-            const user = await index_1.User.findById(id).exec();
-            if (user) {
-                if (!user.token || user.token !== token) {
-                    next(index_2.HttpError.set(401));
-                }
-                req.user = user;
+        const userData = services_1.TokenService.validateAccessToken(token);
+        if (!userData) {
+            next(index_2.HttpError.set(401));
+        }
+        const user = await index_1.User.findById(userData.id).exec();
+        if (user) {
+            if (!user.accessToken || user.accessToken !== token) {
+                next(index_2.HttpError.set(401));
             }
+            req.user = user;
             next();
         }
     }
     catch (error) {
-        next(error);
+        next(index_2.HttpError.set(401));
     }
 };
 exports.default = auth;

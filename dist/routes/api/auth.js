@@ -14,6 +14,7 @@ router.post('/register', jsonParser, (0, middlewares_1.validateBody)(users_1.def
 router.get('/verify/:token', email_1.default.verify);
 router.post('/verify', jsonParser, email_1.default.resendVerify);
 router.post('/login', jsonParser, (0, middlewares_1.validateBody)(users_1.default.login), auth_1.default.login);
+router.get('/refresh', auth_1.default.refresh);
 router.get('/current', middlewares_1.auth, auth_1.default.getCurrent);
 router.post('/logout', middlewares_1.auth, auth_1.default.logout);
 router.patch('/avatars', middlewares_1.auth, middlewares_1.upload.single('avatar'), auth_1.default.updateAvatar);

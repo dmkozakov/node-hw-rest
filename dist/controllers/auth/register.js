@@ -13,6 +13,7 @@ const register = async (req, res) => {
         throw helpers_1.HttpError.set(409, 'Email already in use');
     }
     const newUser = await services_1.AuthService.register(req);
+    res.cookie('refreshToken', newUser === null || newUser === void 0 ? void 0 : newUser.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     if (!newUser) {
         throw helpers_1.HttpError.set(400, 'Unable to register, try again later');
     }
@@ -23,6 +24,10 @@ const register = async (req, res) => {
                 email: newUser.email,
                 subscription: newUser.subscription,
                 avatarURL: newUser.avatarURL,
+            },
+            tokens: {
+                accessToken: newUser.accessToken,
+                refreshToken: newUser.refreshToken,
             },
         },
     });

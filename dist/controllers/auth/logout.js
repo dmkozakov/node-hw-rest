@@ -4,6 +4,7 @@ const helpers_1 = require("../../helpers");
 const services_1 = require("../../services");
 const logout = async (req, res) => {
     const result = await services_1.AuthService.logout(req);
+    res.clearCookie('refreshToken');
     if (!result) {
         throw helpers_1.HttpError.set(400);
     }

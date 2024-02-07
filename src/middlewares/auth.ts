@@ -1,17 +1,10 @@
 import { UserData, UserRequest } from './../interfaces/IUser';
-// import jwt from 'jsonwebtoken';
 
 import { User } from '../models/index';
 import { HttpError } from '../helpers/index';
 import { TokenService } from '../services';
 
-// const { JWT_ACCESS_SECRET } = process.env;
-
 import type { Request, Response, NextFunction } from 'express';
-
-// interface JWT {
-//   id: string;
-// }
 
 const auth = async (req: Request, _: Response, next: NextFunction) => {
   const { authorization = '' } = req.headers;
@@ -22,9 +15,12 @@ const auth = async (req: Request, _: Response, next: NextFunction) => {
   }
 
   try {
-    // if (typeof JWT_ACCESS_SECRET === 'string') {
-    // const { id } = jwt.verify(token, JWT_ACCESS_SECRET) as JWT;
     const userData = TokenService.validateAccessToken(token);
+
+    if (!userData) {
+      next(HttpError.set(401));
+    }
+
     const user = await User.findById((userData as UserData).id).exec();
 
     if (user) {
@@ -33,12 +29,11 @@ const auth = async (req: Request, _: Response, next: NextFunction) => {
       }
 
       (req as UserRequest).user = user;
-      // }
 
       next();
     }
   } catch (error) {
-    next(error);
+    next(HttpError.set(401));
   }
 };
 
